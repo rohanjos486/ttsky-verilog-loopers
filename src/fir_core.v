@@ -17,10 +17,10 @@ module fir_core (
 
     wire [10:0] sum;
     wire [10:0] scaled;
-    wire [10:0] feedback;
+    //wire [10:0] feedback;
     wire [11:0] final_sum;
 
-    reg [7:0] y_prev;
+    reg [7:0] y_prev, y_prev2;
 
     // FIR computation
     assign sum = {3'b000, din} +
@@ -32,15 +32,17 @@ module fir_core (
     assign scaled = sum >> 2;
 
     // Feedback (y[n-1] / 2)
-    assign feedback = {3'b000, y_prev} >> 1;
+    wire [10:0] feedback1 = {3'b000, y_prev} >> 2;
+    wire [10:0] feedback2 = {3'b000, y_prev2} >> 3;
 
     // Combine FIR + IIR
-    assign final_sum = scaled + feedback;
+    assign final_sum = scaled + feedback1 + feedback2;
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             dout <= 0;
             y_prev <= 0;
+            y_prev2 <= 0;
         end else begin
             // Saturation
             if (final_sum > 12'd255)
@@ -49,7 +51,8 @@ module fir_core (
                 dout <= final_sum[7:0];
 
             // Store previous output
-            y_prev <= (final_sum > 12'd255) ? 8'd255 : final_sum[7:0];
+            y_prev2 <= y_prev;
+            y_prev  <= (final_sum > 12'd255) ? 8'd255 : final_sum[7:0];
         end
     end
 
