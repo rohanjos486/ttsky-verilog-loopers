@@ -18,7 +18,7 @@ module tt_um_dsp_top (
 
   // All output pins must be assigned. If not used, assign to 0.
  // Example: ou_out is the sum of ui_in and uio_in
-    wire [7:0] x1, x2,x3;
+    wire [7:0] x1, x2,x3,x4;
   assign uio_out = 0;
   assign uio_oe  = 0;
     // Delay line
@@ -28,7 +28,8 @@ module tt_um_dsp_top (
         .din(ui_in),
         .x1(x1),
         .x2(x2),
-        .x3(x3)
+        .x3(x3),
+        .x4(x4)
     );
 
     // FIR core
@@ -39,6 +40,7 @@ fir_core u_fir (
     .x1(x1),
     .x2(x2),
     .x3(x3),
+    .x4(x4),
     .dout(uo_out)
 );
 wire _unused = &{uio_in, ena};
