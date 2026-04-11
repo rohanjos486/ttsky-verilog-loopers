@@ -15,7 +15,7 @@ module fir_core (
     wire [9:0] sum;
 
     // Shift-add implementation
-    assign sum = din + (x1 << 1) + x2;
+    assign sum = {2'b00, din} + ({2'b00, x1} << 1) + {2'b00, x2};
 
     always @(*) begin
         // Saturation logic
