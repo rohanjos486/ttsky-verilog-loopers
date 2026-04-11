@@ -40,7 +40,7 @@ module fir_core (
     // ================= Combine FIRs =================
 
     wire signed [11:0] fir1_ext = $signed({1'b0, scaled});
-    wire signed [11:0] fir2_ext = $signed(fir2);
+    wire signed [11:0] fir2_ext = $signed({fir2[10], fir2});
 
     wire signed [11:0] combined_fir = fir1_ext + fir2_ext;
 
