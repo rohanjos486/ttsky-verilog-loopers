@@ -37,5 +37,6 @@ module tt_um_dsp_top (
         .x2(x2),
         .dout(uo_out)
     );
-
+wire _unused = &{uio_in, ena};
+    
 endmodule
