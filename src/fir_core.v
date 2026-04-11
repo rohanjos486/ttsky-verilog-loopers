@@ -12,21 +12,23 @@ module fir_core (
     input [7:0] x1,
     input [7:0] x2,
     input [7:0] x3,
+    input [7:0] x4,
     output reg [7:0] dout
 );
 
     wire [10:0] sum;
     wire [10:0] scaled;
-    //wire [10:0] feedback;
-    wire [11:0] final_sum;
+    //wire [11:0] feedback;
+    wire [12:0] final_sum;
 
     reg [7:0] y_prev, y_prev2;
 
     // FIR computation
-    assign sum = {3'b000, din} +
-                 ({3'b000, x1} << 1) +
-                 ({3'b000, x2} << 1) +
-                 {3'b000, x3};
+    assign sum = {4'b0000, din} +
+                 ({4'b0000, x1} << 1) +
+                 ({4'b0000, x2} << 1) +
+                 ({4'b0000, x3} << 1) +
+                 {4'b0000, x4};
 
     // FIR scaling (divide by 4)
     assign scaled = sum >> 2;
