@@ -16,7 +16,7 @@ module fir_core (
 );
 
     // ================= FIR =================
-
+    reg [1:0] scale;
     wire [10:0] sum;
     wire [10:0] scaled;
 
@@ -25,7 +25,8 @@ module fir_core (
                  ({3'b000, x2} << 1) +
                  {3'b000, x3};
 
-    assign scaled = sum >> 2;
+    assign scaled = (scale == 0) ? sum :
+                (sum >> scale);
 
     // ================= FIR2 =================
 
@@ -56,13 +57,20 @@ module fir_core (
     wire signed [11:0] final_sum = combined_fir + feedback1 + feedback2;
 
     // ================= Sequential =================
-
+reg loaded;
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            dout    <= 0;
-            y_prev  <= 0;
-            y_prev2 <= 0;
-        end else begin
+    scale  <= 2'd2;
+    loaded <= 0;
+    dout    <= 0;
+    y_prev  <= 0;
+    y_prev2 <= 0;
+end 
+        else begin
+                if (!loaded) begin
+                  scale  <= din[1:0];
+                  loaded <= 1;
+                end
             // Saturation
             if (final_sum > 12'sd255)
                 dout <= 8'd255;
