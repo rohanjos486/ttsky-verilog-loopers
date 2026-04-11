@@ -11,7 +11,9 @@ module delay_line(
     input [7:0] din,
     output reg [7:0] x1,
     output reg [7:0] x2,
-    output reg [7:0] x3
+    output reg [7:0] x3,
+    output reg [7:0] x4
+    
 );
 
     always @(posedge clk or posedge rst) begin
@@ -19,7 +21,9 @@ module delay_line(
             x1 <= 0;
             x2 <= 0;
             x3 <= 0;
+            x4 <= 0;
         end else begin
+            x4 <= x3;
             x3 <= x2;
             x2 <= x1;
             x1 <= din;
