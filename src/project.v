@@ -31,12 +31,15 @@ module tt_um_dsp_top (
     );
 
     // FIR core
-    fir_core u_fir (
-        .din(ui_in),
-        .x1(x1),
-        .x2(x2),
-        .dout(uo_out)
-    );
+fir_core u_fir (
+    .clk(clk),
+    .rst(rst_n),
+    .din(ui_in),
+    .x1(x1),
+    .x2(x2),
+    .x3(x3),
+    .dout(uo_out)
+);
 wire _unused = &{uio_in, ena};
     
 endmodule
