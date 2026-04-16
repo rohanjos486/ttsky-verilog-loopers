@@ -97,10 +97,12 @@ end else begin
         dout <= final_sum[7:0];
 
     // Feedback
+    if (mode == 2'b01 || mode == 2'b11) begin
     y_prev2 <= y_prev;
     y_prev  <= (final_sum > 12'sd255) ? 8'd255 :
                (final_sum < 12'sd0)   ? 8'd0   :
                final_sum[7:0];
+    end
 end
         end
     end
