@@ -24,7 +24,7 @@ module tt_um_dsp_top (
     // Delay line
     delay_line u_delay (
         .clk(clk),
-        .rst(rst_n),
+        .rst(~rst_n),
         .din(ui_in),
         .x1(x1),
         .x2(x2),
