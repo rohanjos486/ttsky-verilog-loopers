@@ -65,8 +65,6 @@ wire signed [11:0] full_out  = combined_fir + feedback1 + feedback2;
 
 
 
-wire signed [11:0] selected_output;
-
 assign selected_output =
     (mode == 2'b00) ? fir_only  :
     (mode == 2'b01) ? fir_iir   :
