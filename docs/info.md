@@ -9,48 +9,67 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-This project implements an area-efficient 8-bit streaming FIR (Finite Impulse Response) filter core.
+This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal on ui_in, processes it through a configurable mathematical pipeline, and outputs the filtered 8-bit result on uo_out.
 
-The filter processes one 8-bit input sample per clock cycle and produces a filtered 8-bit output. It is based on a 3-tap FIR structure defined by:
+1. The Configuration Cycle
+The module must be configured immediately after powering on or resetting. The very first byte sent to ui_in after the reset pin (rst_n) goes high is captured as the "Configuration Byte".
 
-y[n] = x[n] + 2x[n-1] + x[n-2]
+Bits [1:0] set the Operating Mode.
 
-The design consists of three main components:
+Bits [3:2] set the Scale (a right-shift divisor to prevent the FIR sum from exceeding 8-bit limits).
 
-1. Delay Line:
-   Stores the previous two input samples using sequential registers.
+Bits [7:4] are ignored.
 
-2. FIR Core:
-   Performs shift-add arithmetic to compute the filter output. Multiplication is avoided by using bit shifting (x1 << 1).
+2. Operating Modes
+Once configured, the core enters data-streaming mode. It supports four distinct DSP topologies:
 
-3. Saturation Logic:
-   Ensures the output remains within 8-bit range (0–255) by clipping overflow values.
+Mode 0 (Low-Pass FIR): Applies a smoothing filter using the coefficients [1, 2, 2, 1].
 
-The design is fully synchronous and operates on the rising edge of the clock. It is optimized for low area and avoids multipliers to meet strict gate count constraints.
+Mode 1 (FIR + IIR): Applies the Low-Pass FIR and adds recursive feedback from previous outputs (y[n-1]/4 + y[n-2]/8).
+
+Mode 2 (High-Pass FIR): Applies an edge-detecting filter using alternating coefficients [1, -1, 1, -1].
+
+Mode 3 (Full DSP): Combines the Low-Pass FIR, High-Pass FIR, and IIR feedback into a single output.
+
+3. Saturation Protection
+To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching uo_out, the final sum is checked. If it exceeds 255, it clamps to 255. If it drops below 0, it clamps to 0. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world signals.
 
 
 ## How to test
 
-1. Apply a clock signal to `clk`.
-2. Assert `rst` high for a few cycles, then deassert to begin operation.
-3. Provide 8-bit input samples on `din` every clock cycle.
-4. Observe the filtered output on `dout`.
+To verify the DSP core on silicon or in simulation, follow this exact sequence:
 
-Suggested test cases:
+🔹 Step 1: Load configuration
 
-- Constant Input:
-  Apply a fixed value (e.g., 50). Output should stabilize at a higher value due to filter gain.
+Apply reset and send one configuration word:
 
-- Step Input:
-  Transition from 0 to a higher value (e.g., 100). Output should gradually rise, demonstrating smoothing behavior.
+din = {4'b0000, scale, mode}
 
-- Alternating Input:
-  Toggle between two values (e.g., 0 and 200). Output should show reduced variation compared to input.
+Example:
 
-- Ramp Input:
-  Gradually increase input values. Output should follow with smoothing and possible saturation at high values.
+mode = 2'b00 → FIR only
+scale = 2'b10 → divide by 4
+🔹 Step 2: Apply input signals
 
-Simulation can be performed using standard Verilog tools such as Icarus Verilog or ModelSim.
+Test the DSP behavior using different input types:
+
+**Constant input**
+Apply a fixed value (e.g., 50)
+Observe smoothing and steady-state response
+Step input
+Transition from 0 → 100
+Observe rise time and settling behavior
+Ramp input
+Gradually increase input
+Observe tracking and saturation
+Alternating input
+Toggle between values (e.g., 0 ↔ 200)
+Useful for testing high-pass response (Mode 2)
+🔹 Expected behavior
+Mode 0 → smooth output
+Mode 1 → smoother with decay
+Mode 2 → reacts to changes
+Mode 3 → combined response with saturation
 
 
 
