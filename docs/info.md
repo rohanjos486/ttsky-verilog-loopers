@@ -36,7 +36,7 @@ $$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$
 
 $$y[n] = \left( x[n] + 2x[n-1] + 2x[n-2] + x[n-3] \right) + \frac{y[n-1]}{4} + \frac{y[n-2]}{8}$$  
 
-•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients **[1, -1, 1, -1]**, scaled down by a factor of 2.  
+•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients `[1, -1, 1, -1]`, scaled down by a factor of 2.  
 
 $$y[n] = \frac{x[n] - x[n-1] + x[n-2] - x[n-3]}{2}$$  
 
@@ -88,10 +88,15 @@ The following test cases can be used to mathematically verify every feature of t
 
 ## External hardware
 
-To fully utilize this DSP core in a physical environment, the following external hardware is recommended:
+This project does not require any external hardware.
 
-- Basic Verification: A microcontroller (e.g., Arduino Uno, Raspberry Pi Pico RP2040, or ESP32) with 8 GPIO pins connected to ui_in to generate digital test patterns, and 8 GPIO pins connected to uo_out to read the filtered results.
-  
--   Real-World Audio/Sensor Processing:
-    -   Input: An 8-bit parallel Analog-to-Digital Converter (ADC) connected to ui_in to sample real analog signals (like a microphone or light sensor).
-    -   Output: An 8-bit parallel Digital-to-Analog Converter (DAC)—or a simple R-2R resistor ladder—connected to uo_out to reconstruct the filtered analog signal for an oscilloscope or speaker.
+The DSP core operates entirely on digital signals (`ui_in`, `uo_out`) and is designed for simulation or integration into a larger digital system.
+
+For optional hardware testing, the following setups may be used:
+
+- **Basic Verification**:  
+  A microcontroller (e.g., Arduino Uno, Raspberry Pi Pico, or ESP32) can drive `ui_in` with test patterns and read `uo_out` for validation.
+
+- **Real-World Signal Processing (Optional)**:  
+  - Input: An 8-bit parallel ADC can be used to feed real analog signals (e.g., audio or sensors) into `ui_in`.  
+  - Output: An 8-bit DAC or simple R-2R resistor ladder can be used to reconstruct the processed signal from `uo_out`.
