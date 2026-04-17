@@ -9,7 +9,7 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal on `ui_in` processes it through a configurable mathematical pipeline, and outputs the filtered 8-bit result on `uo_out`.
+This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal on `ui_in`, processes it through a configurable mathematical pipeline, and outputs the filtered 8-bit result on `uo_out`.
 
 **The Configuration Cycle**  
 
