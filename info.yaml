@@ -1,11 +1,11 @@
 # Tiny Tapeout project information
 project:
-  title:        "8-bit Streaming FIR Filter Core"      # Project title
-  author:       "logic looper"      # Your name
+  title:        "Configurable 8-bit Streaming DSP Core"      # Project title
+  author:       "Logic Loopers (Rohan Jose, Neelaja Joshi, Megha Murphy Raghunath)"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "performs FIR"      # One line description of what your project does
+  description:  "A configurable 4-mode FIR/IIR digital signal processor with dynamic scaling and saturation protection."      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     50000000       # Clock frequency in Hz (or 0 if not applicable)
+  clock_hz:     50000000       # Clock frequency in Hz (50 MHz target)
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
   tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
