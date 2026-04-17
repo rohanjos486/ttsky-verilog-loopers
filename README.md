@@ -1,42 +1,42 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# 🎛️ Logic Loopers: Configurable 8-bit Streaming DSP Core
 
-- [Read the documentation for project](docs/info.md)
+**Team:** Logic Loopers (Rohan Jose, Neelaja Joshi, Megha Murphy Raghunath)
 
-## What is Tiny Tapeout?
+## 📌 Project Overview
+The Logic Loopers DSP Core is a fully verified, tapeout-ready digital signal processing block designed for the **Skywater 130nm ASIC node** via the Tiny Tapeout platform. 
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+It processes continuous 8-bit streaming data and features a configurable datapath supporting both **Finite Impulse Response (FIR)** and **Infinite Impulse Response (IIR)** topologies. Unlike standard combinatorial logic projects, this core implements recursive mathematical feedback, dynamic arithmetic scaling, and robust hardware saturation logic to prevent bit-wrapping on physical silicon.
 
-To learn more and get started, visit https://tinytapeout.com.
+## 🚀 Key Architectural Features
+* **4-Mode Configurable Datapath:**
+  * `Mode 0`: Low-Pass FIR only
+  * `Mode 1`: FIR + IIR Feedback
+  * `Mode 2`: High-Pass FIR only
+  * `Mode 3`: Full DSP (FIR_Low + FIR_High + IIR)
+* **Dynamic Gain Scaling:** A variable right-shift divisor prevents internal summations from exceeding strict 8-bit limits based on input signal magnitude.
+* **Hardware Saturation Protection:** Internal summations use 12-bit signed arithmetic clamped to a final 8-bit unsigned output (0-255). This guarantees acoustic/signal stability by preventing catastrophic integer wrap-around.
+* **Efficient Pipelining:** Evaluates complex discrete-time difference equations, producing one output sample per clock cycle after initial configuration.
 
-## Set up your Verilog project
+## 📐 Physical Design & Sign-off
+This design has been fully routed through the OpenLane ASIC flow and is 100% tapeout-ready.
+* **Target Frequency:** 50 MHz
+* **Area Utilization:** 43.68% (Optimal zone for routing safety and hold-fix buffering)
+* **DRC / LVS:** 0 Violations (Clean)
+* **Timing:** Positive WNS and WHS (Fully constrained clock tree)
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+## 📖 Official Datasheet & Documentation
+For the complete mathematical breakdown, Z-transform difference equations, configuration byte maps, and exact hardware test vectors, please refer to our official project documentation:
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+👉 **[Read the Full DSP Core Datasheet Here](docs/info.md)**
 
-## Enable GitHub actions to build the results page
+---
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+### Local Verification & Simulation
+If you wish to simulate this core locally, the repository includes a comprehensive Verilog testbench (`test/tb.v`) that covers all configuration states, saturation bounds, and steady-state IIR convergence limits. 
 
-## Resources
-
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+*To build and test locally:*
+1. Clone this repository.
+2. Navigate to the `test` directory.
+3. Run `make` to execute the test suite via Verilator/Icarus Verilog.
