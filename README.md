@@ -37,7 +37,26 @@ The DSP core combines:
 
 All blocks are pipelined for continuous streaming operation.
 
----
+---  
+
+## 🧱 Block Diagram
+
+```
+          +-------------------+
+ui_in --->|   FIR (Low-pass)  |---+
+          +-------------------+   |
+                                  +--> +-------------------+
+          +-------------------+   |    |                   |
+ui_in --->|  FIR2 (High-pass) |---+--> |    SUM (Adder)    | ---> Scaling ---> Saturation ---> uo_out
+          +-------------------+        |                   |
+                                       +-------------------+
+                                              ^
+                                              |
+                                      +------------------+
+                                      |   IIR Feedback   |
+                                      | (y[n-1], y[n-2]) |
+                                      +------------------+
+```
 
 ## 🔌 I/O Interface
 
@@ -82,16 +101,12 @@ For the complete mathematical breakdown, Z-transform equations, configuration de
 
 ## 🧪 Local Verification & Simulation
 
-A comprehensive Verilog testbench is included (`test/tb.v`) covering:
-- All operating modes  
-- Step, ramp, and alternating inputs  
-- Saturation behavior  
-- IIR transient and steady-state response  
+This repository includes the standard Verilog testbench wrapper (`test/tb.v`) configured for the Tiny Tapeout Gate-Level simulation flow. It is ready to be hooked up to a Cocotb Python environment.
 
-**To run locally:**
-1. Clone the repository  
-2. Navigate to the `test` directory  
-3. Run:
+To simulate the core locally with your own test vectors:
+1. Clone the repository.
+2. Navigate to the `test` directory.
+3. Define your custom stimulus (such as specific configuration bytes and streaming inputs) in `test.py`.
+4. Run the simulation:
    ```bash
    make
-   ```
