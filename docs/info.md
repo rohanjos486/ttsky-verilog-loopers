@@ -9,18 +9,18 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal on **ui_in**, processes it through a configurable mathematical pipeline, and outputs the filtered 8-bit result on **uo_out**.
+This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal on `ui_in` processes it through a configurable mathematical pipeline, and outputs the filtered 8-bit result on `uo_out`.
 
 **The Configuration Cycle**  
 
   
-The module must be configured immediately after powering on or resetting. The very first byte sent to **ui_in** after the reset pin (**rst_n**) goes high is captured as the "Configuration Byte".
+The module must be configured immediately after powering on or resetting. The very first byte sent to `ui_in` after the reset pin (`rst_n`) goes high is captured as the "Configuration Byte".
 
 | Bits     | Parameter | Description |
 | -------- | --------  | --------    |
-| [7:4]    |  Reserved   | Ignored by the core. |
-| [3:2]    |  Scale   | Right-shift divisor (0 to 3) to prevent the FIR sum from exceeding 8-bit limits. |
-| [1:0]	   |  Mode  | Sets the operating topology (see below). |
+| `[7:4]`    |  Reserved   | Ignored by the core. |
+| `[3:2] `   |  Scale   | Right-shift divisor (0 to 3) to prevent the FIR sum from exceeding 8-bit limits. |
+| `[1:0]`	   |  Mode  | Sets the operating topology (see below). |
 
 **Operating Modes & Mathematical Architecture**  
 
@@ -28,7 +28,7 @@ Once configured, the core enters data-streaming mode. The internal architecture 
 
 (Note: In the equations below, $x[n]$ is the scaled input stream, and $y[n]$ is the output).  
 
-•	**Mode 0 (Low-Pass FIR)**: Applies a smoothing filter using the coefficients **[1, 2, 2, 1]**.  
+•	**Mode 0 (Low-Pass FIR)**: Applies a smoothing filter using the coefficients `[1, 2, 2, 1]`.  
 
 $$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$  
 
@@ -36,7 +36,7 @@ $$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$
 
 $$y[n] = \left( x[n] + 2x[n-1] + 2x[n-2] + x[n-3] \right) + \frac{y[n-1]}{4} + \frac{y[n-2]}{8}$$  
 
-•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients **[1, -1, 1, -1]**.  
+•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients `[1, -1, 1, -1]`.  
 
 $$y[n] = x[n] - x[n-1] + x[n-2] - x[n-3]$$  
 
@@ -48,10 +48,10 @@ $$y[n] = \text{FIR}_{lowpass} + \text{FIR}_{highpass} + \frac{y[n-1]}{4} + \frac
 
 **Saturation Protection**    
 
-To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching uo_out, the final sum is checked. If it exceeds 255, it clamps to 255. If it drops below 0, it clamps to 0. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world audio or sensor signals.  
+To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching `uo_out`, the final sum is checked. If it exceeds `255`, it clamps to `255`. If it drops below `0`, it clamps to `0`. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world audio or sensor signals.  
 
 
-   The design is fully pipelined and processes one input sample per clock cycle after configuration.
+The design is fully pipelined and processes one input sample per clock cycle after configuration.
 
 
 ## How to test
