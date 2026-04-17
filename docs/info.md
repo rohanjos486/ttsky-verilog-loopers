@@ -83,7 +83,7 @@ The following test cases can be used to mathematically verify every feature of t
 | **Scale Validation** (Max Gain)   | `3` (`0000 0011`)           | Constant `50`                 | Instantly saturates/clamps at `255` |  
 | **Scale Validation** (Min Gain)   | `15` (`0000 1111`)          | Constant `50`                 | Settles at `58`  |  
 
-**Note on High-Pass Testing (Mode 2)**: To test the edge-detection nature of **Mode 2**, a constant input will result in **0**. By providing an alternating input (e.g., a square wave of 0 and 200), the differencing logic will actively output the 100 amplitude.
+**Note on High-Pass Testing (Mode 2)**: To test the edge-detection nature of **Mode 2**, a constant input will result in `0`. By providing an alternating input (e.g., a square wave of 0 and 200), the differencing logic will actively output the 100 amplitude.
 
 
 ## External hardware
