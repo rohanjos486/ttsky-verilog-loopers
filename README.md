@@ -7,7 +7,7 @@
 ---
 
 ## 📌 Project Overview
-The Logic Loopers DSP Core is a fully verified, tapeout-ready digital signal processing block designed for the **Skywater 130nm ASIC node** via the Tiny Tapeout platform. 
+This DSP Core is a fully verified, tapeout-ready digital signal processing block designed for the **Skywater 130nm ASIC node** via the Tiny Tapeout platform. 
 
 It processes continuous 8-bit streaming data and features a configurable datapath supporting both **Finite Impulse Response (FIR)** and **Infinite Impulse Response (IIR)** topologies.  
 
