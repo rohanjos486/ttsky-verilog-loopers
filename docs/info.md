@@ -36,9 +36,9 @@ $$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$
 
 $$y[n] = \left( x[n] + 2x[n-1] + 2x[n-2] + x[n-3] \right) + \frac{y[n-1]}{4} + \frac{y[n-2]}{8}$$  
 
-•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients `[1, -1, 1, -1]`.  
+•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients **[1, -1, 1, -1]**, scaled down by a factor of 2.  
 
-$$y[n] = x[n] - x[n-1] + x[n-2] - x[n-3]$$  
+$$y[n] = \frac{x[n] - x[n-1] + x[n-2] - x[n-3]}{2}$$  
 
 •	**Mode 3 (Full DSP)**: Combines the Low-Pass FIR, High-Pass FIR, and the IIR feedback into a single, comprehensive datapath.  
 
