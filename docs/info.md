@@ -48,12 +48,15 @@ $$y[n] = \text{FIR}_{lowpass} + \text{FIR}_{highpass} + \frac{y[n-1]}{4} + \frac
 
 **Saturation Protection**    
 
-To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching uo_out, the final sum is checked. If it exceeds 255, it clamps to 255. If it drops below 0, it clamps to 0. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world audio or sensor signals.
+To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching uo_out, the final sum is checked. If it exceeds 255, it clamps to 255. If it drops below 0, it clamps to 0. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world audio or sensor signals.  
+
+
+   The design is fully pipelined and processes one input sample per clock cycle after configuration.
 
 
 ## How to test
 
-To verify the DSP core on silicon or in simulation, the pipeline must be initialized and configured before streaming data.
+To verify the DSP core in simulation or on hardware, the pipeline must first be initialized and configured before streaming data.
 
 **Initialization Sequence:**  
 
