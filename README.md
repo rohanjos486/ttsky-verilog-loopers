@@ -13,9 +13,10 @@ It processes continuous 8-bit streaming data and features a configurable datapat
 
 This design goes beyond simple combinational logic by implementing recursive feedback (IIR), dynamic scaling, and saturation-aware arithmetic suitable for real signal processing workloads.
 
----
+---  
 
 ## 🚀 Key Architectural Features
+* **4-Tap FIR-Based DSP Architecture:** Processes the current input sample along with three delayed samples, forming a 4-tap structure. This enables both smoothing (low-pass FIR) and edge detection (high-pass FIR), while additional IIR feedback extends the system to a recursive DSP.
 * **4-Mode Configurable Datapath:**
   * `Mode 0`: Low-Pass FIR only
   * `Mode 1`: FIR + IIR Feedback
@@ -42,20 +43,29 @@ All blocks are pipelined for continuous streaming operation.
 ## 🧱 Block Diagram
 
 ```
-          +-------------------+
-ui_in --->|   FIR (Low-pass)  |---+
-          +-------------------+   |
-                                  +--> +-------------------+
-          +-------------------+   |    |                   |
-ui_in --->|  FIR2 (High-pass) |---+--> |    SUM (Adder)    | ---> Scaling ---> Saturation ---> uo_out
-          +-------------------+        |                   |
-                                       +-------------------+
-                                              ^
-                                              |
-                                      +------------------+
-                                      |   IIR Feedback   |
-                                      | (y[n-1], y[n-2]) |
-                                      +------------------+
+          +---------------------------+
+ui_in --->|  Sample Delay Line        |--> x[n], x[n-1], x[n-2], x[n-3]
+          +---------------------------+
+               |                   |
+               |                   |
+               v                   v
++-------------------+        +-------------------+
+| FIR (Low-pass)    |        | FIR2 (High-pass)  |
++-------------------+        +-------------------+
+                \__________________/
+                          |
+                          v
+                +-------------------+
+                |                   |
+                |    SUM (Adder)    | ---> Scaling ---> Saturation ---> uo_out
+                |                   |                                     |      
+                +-------------------+                                     |    
+                          ^                                               | 
+                          |                                               | 
+                 +------------------+                                     |
+                 |   IIR Feedback   |<------------------------------------+
+                 | (y[n-1], y[n-2]) |
+                 +------------------+
 ```
 
 ## 🔌 I/O Interface
@@ -77,6 +87,8 @@ ui_in --->|  FIR2 (High-pass) |---+--> |    SUM (Adder)    | ---> Scaling ---> S
    - `[1:0]` → mode selection  
 3. Stream 8-bit input samples continuously on `ui_in`
 4. Read processed output from `uo_out`
+
+**Note**: The first input after reset is interpreted as configuration, not data.  
 
 The core produces one output per clock cycle after pipeline fill.
 
