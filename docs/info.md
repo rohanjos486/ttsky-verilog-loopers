@@ -28,7 +28,7 @@ Once configured, the core enters data-streaming mode. The internal architecture 
 
 (Note: In the equations below, $x[n]$ is the scaled input stream, and $y[n]$ is the output).  
 
-•	**Mode 0 (Low-Pass FIR)**: Applies a smoothing filter using the coefficients [1, 2, 2, 1].  
+•	**Mode 0 (Low-Pass FIR)**: Applies a smoothing filter using the coefficients **[1, 2, 2, 1]**.  
 
 $$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$  
 
@@ -36,7 +36,7 @@ $$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$
 
 $$y[n] = \left( x[n] + 2x[n-1] + 2x[n-2] + x[n-3] \right) + \frac{y[n-1]}{4} + \frac{y[n-2]}{8}$$  
 
-•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients [1, -1, 1, -1].  
+•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients **[1, -1, 1, -1]**.  
 
 $$y[n] = x[n] - x[n-1] + x[n-2] - x[n-3]$$  
 
@@ -71,14 +71,14 @@ To verify the DSP core on silicon or in simulation, the pipeline must be initial
 The following test cases can be used to mathematically verify every feature of the core. Because the pipeline takes a few cycles to fill, allow the output to ramp up before reading the steady-state result.  
 
 
-| Feature Tested                    | Config Byte (Dec / Bin) | Streaming Input (ui_in) | Expected Output (uo_out) |
-| --------                          | -------- | --------     | --------                |
-| **Mode 0**: Low-Pass FIR          | 8 (0000 1000)           | Constant 50             | Ramps up to 75   |
-| **Mode 1**: FIR + IIR Feedback    | 9 (0000 1001)           | Constant 50             | Settles at 118  |  
-| **Mode 2**: High-Pass FIR         | 10 (0000 1010)          | Alternating 0 and 200   | Alternates between 0 and 100   |  
-| **Mode 3**: Full DSP              | 11 (0000 1011)          | Constant 50             | Settles at 118  |  
-| **Scale Validatio**n (Max Gain)   | 3 (0000 0011)           | Constant 50             | Instantly saturates/clamps at 255 |  
-| **Scale Validation** (Min Gain)   | 15 (0000 1111)          | Constant 50             | Settles at 58  |  
+| Feature Tested                    | Config Byte (Dec / Bin) | Streaming Input (ui_in)         | Expected Output (uo_out) |
+| --------                          | -------- | --------     | --------                        |
+| **Mode 0**: Low-Pass FIR          | 8 (0000 1000)           | Constant **50**                 | Ramps up to **75**   |
+| **Mode 1**: FIR + IIR Feedback    | 9 (0000 1001)           | Constant **50**                 | Settles at **118**  |  
+| **Mode 2**: High-Pass FIR         | 10 (0000 1010)          | Alternating **0** and **200**   | Alternates between 0 and **100**   |  
+| **Mode 3**: Full DSP              | 11 (0000 1011)          | Constant **50**                 | Settles at **118**  |  
+| **Scale Validatio**n (Max Gain)   | 3 (0000 0011)           | Constant **50**                 | Instantly saturates/clamps at **255** |  
+| **Scale Validation** (Min Gain)   | 15 (0000 1111)          | Constant **50**                 | Settles at **58**  |  
 
 **Note on High-Pass Testing (Mode 2)**: To test the edge-detection nature of **Mode 2**, a constant input will result in **0**. By providing an alternating input (e.g., a square wave of 0 and 200), the differencing logic will actively output the 100 amplitude.
 
