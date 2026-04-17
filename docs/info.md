@@ -32,7 +32,7 @@ Once configured, the core enters data-streaming mode. The internal architecture 
 
 $$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$  
 
-•	M**ode 1 (FIR + IIR)**: Combines the Low-Pass FIR with a recursive Infinite Impulse Response feedback loop to create a more complex frequency response.  
+•	**Mode 1 (FIR + IIR)**: Combines the Low-Pass FIR with a recursive Infinite Impulse Response feedback loop to create a more complex frequency response.  
 
 $$y[n] = \left( x[n] + 2x[n-1] + 2x[n-2] + x[n-3] \right) + \frac{y[n-1]}{4} + \frac{y[n-2]}{8}$$  
 
@@ -77,7 +77,7 @@ The following test cases can be used to mathematically verify every feature of t
 | **Mode 1**: FIR + IIR Feedback    | 9 (0000 1001)           | Constant **50**                 | Settles at **118**  |  
 | **Mode 2**: High-Pass FIR         | 10 (0000 1010)          | Alternating **0** and **200**   | Alternates between 0 and **100**   |  
 | **Mode 3**: Full DSP              | 11 (0000 1011)          | Constant **50**                 | Settles at **118**  |  
-| **Scale Validatio**n (Max Gain)   | 3 (0000 0011)           | Constant **50**                 | Instantly saturates/clamps at **255** |  
+| **Scale Validation** (Max Gain)   | 3 (0000 0011)           | Constant **50**                 | Instantly saturates/clamps at **255** |  
 | **Scale Validation** (Min Gain)   | 15 (0000 1111)          | Constant **50**                 | Settles at **58**  |  
 
 **Note on High-Pass Testing (Mode 2)**: To test the edge-detection nature of **Mode 2**, a constant input will result in **0**. By providing an alternating input (e.g., a square wave of 0 and 200), the differencing logic will actively output the 100 amplitude.
@@ -89,5 +89,6 @@ To fully utilize this DSP core in a physical environment, the following external
 
 - Basic Verification: A microcontroller (e.g., Arduino Uno, Raspberry Pi Pico RP2040, or ESP32) with 8 GPIO pins connected to ui_in to generate digital test patterns, and 8 GPIO pins connected to uo_out to read the filtered results.
   
--   Real-World Audio/Sensor Processing: * Input: An 8-bit parallel Analog-to-Digital Converter (ADC) connected to ui_in to sample real analog signals (like a microphone or light sensor).
+-   Real-World Audio/Sensor Processing:
+    -   Input: An 8-bit parallel Analog-to-Digital Converter (ADC) connected to ui_in to sample real analog signals (like a microphone or light sensor).
     -   Output: An 8-bit parallel Digital-to-Analog Converter (DAC)—or a simple R-2R resistor ladder—connected to uo_out to reconstruct the filtered analog signal for an oscilloscope or speaker.
