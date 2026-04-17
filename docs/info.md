@@ -14,7 +14,7 @@ This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal
 **The Configuration Cycle**  
 
   
-The module must be configured immediately after powering on or resetting. The very first byte sent to `ui_in` after the reset pin (`rst_n`) goes high is captured as the "Configuration Byte".
+The module must be configured immediately after powering on or resetting. The very first byte sent to `ui_in` after the reset pin (`rst_n`) goes high is captured as the configuration byte.
 
 | Bits     | Parameter | Description |
 | -------- | --------  | --------    |
@@ -51,8 +51,7 @@ $$y[n] = \text{FIR}_{lowpass} + \text{FIR}_{highpass} + \frac{y[n-1]}{4} + \frac
 To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching `uo_out`, the final sum is checked. If it exceeds `255`, it clamps to `255`. If it drops below `0`, it clamps to `0`. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world audio or sensor signals.  
 
 
-The design is fully pipelined and processes one input sample per clock cycle after configuration.
-
+The core operates in a streaming fashion, producing one output sample per clock cycle after an initial pipeline fill latency.
 
 ## How to test
 
