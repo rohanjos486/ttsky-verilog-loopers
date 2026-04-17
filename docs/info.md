@@ -22,17 +22,29 @@ The module must be configured immediately after powering on or resetting. The ve
 | [3:2]    |  Scale   | Right-shift divisor (0 to 3) to prevent the FIR sum from exceeding 8-bit limits. |
 | [1:0]	   |  Mode  | Sets the operating topology (see below). |
 
-**Operating Modes**    
+**Operating Modes & Mathematical Architecture**  
 
-Once configured, the core enters data-streaming mode. It supports four distinct DSP topologies:
+Once configured, the core enters data-streaming mode. The internal architecture evaluates the following discrete-time difference equations based on the selected mode.  
 
-**Mode 0 (Low-Pass FIR):** Applies a smoothing filter using the coefficients **[1, 2, 2, 1]**.
+(Note: In the equations below, $x[n]$ is the scaled input stream, and $y[n]$ is the output).  
 
-**Mode 1 (FIR + IIR):** Applies the Low-Pass FIR and adds recursive feedback from previous outputs **(y[n-1]/4 + y[n-2]/8)**.
+•	**Mode 0 (Low-Pass FIR)**: Applies a smoothing filter using the coefficients [1, 2, 2, 1].  
 
-**Mode 2 (High-Pass FIR):** Applies an edge-detecting filter using alternating coefficients **[1, -1, 1, -1]**.
+$$y[n] = x[n] + 2x[n-1] + 2x[n-2] + x[n-3]$$  
 
-**Mode 3 (Full DSP):** Combines the Low-Pass FIR, High-Pass FIR, and IIR feedback into a single output.
+•	M**ode 1 (FIR + IIR)**: Combines the Low-Pass FIR with a recursive Infinite Impulse Response feedback loop to create a more complex frequency response.  
+
+$$y[n] = \left( x[n] + 2x[n-1] + 2x[n-2] + x[n-3] \right) + \frac{y[n-1]}{4} + \frac{y[n-2]}{8}$$  
+
+•	**Mode 2 (High-Pass FIR)**: Applies an edge-detecting/transient filter using alternating coefficients [1, -1, 1, -1].  
+
+$$y[n] = x[n] - x[n-1] + x[n-2] - x[n-3]$$  
+
+•	**Mode 3 (Full DSP)**: Combines the Low-Pass FIR, High-Pass FIR, and the IIR feedback into a single, comprehensive datapath.  
+
+$$y[n] = \text{FIR}_{lowpass} + \text{FIR}_{highpass} + \frac{y[n-1]}{4} + \frac{y[n-2]}{8}$$  
+
+
 
 **Saturation Protection**    
 
