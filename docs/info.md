@@ -66,15 +66,16 @@ The following test cases can be used to mathematically verify every feature of t
 | **Mode 2**: High-Pass FIR         | 10 (0000 1010)          | Alternating 0 and 200   | Alternates between 0 and 100   |  
 | **Mode 3**: Full DSP              | 11 (0000 1011)          | Constant 50             | Settles at 118  |  
 | **Scale Validatio**n (Max Gain)   | 3 (0000 0011)           | Constant 50             | Instantly saturates/clamps at 255 |  
-| **Scale Validation** (Min Gain)   | 15 (0000 1111)          | Constant 50             | Settles at 58  |
+| **Scale Validation** (Min Gain)   | 15 (0000 1111)          | Constant 50             | Settles at 58  |  
+
+**Note on High-Pass Testing (Mode 2)**: To test the edge-detection nature of **Mode 2**, a constant input will result in **0**. By providing an alternating input (e.g., a square wave of 0 and 200), the differencing logic will actively output the 100 amplitude.
 
 
 ## External hardware
 
 To fully utilize this DSP core in a physical environment, the following external hardware is recommended:
 
-Basic Verification: A microcontroller (e.g., Arduino Uno, Raspberry Pi Pico RP2040, or ESP32) with 8 GPIO pins connected to ui_in to generate digital test patterns, and 8 GPIO pins connected to uo_out to read the filtered results.
-
-Real-World Audio/Sensor Processing: * Input: An 8-bit parallel Analog-to-Digital Converter (ADC) connected to ui_in to sample real analog signals (like a microphone or light sensor).
-
-Output: An 8-bit parallel Digital-to-Analog Converter (DAC)—or a simple R-2R resistor ladder—connected to uo_out to reconstruct the filtered analog signal for an oscilloscope or speaker.
+- Basic Verification: A microcontroller (e.g., Arduino Uno, Raspberry Pi Pico RP2040, or ESP32) with 8 GPIO pins connected to ui_in to generate digital test patterns, and 8 GPIO pins connected to uo_out to read the filtered results.
+  
+-   Real-World Audio/Sensor Processing: * Input: An 8-bit parallel Analog-to-Digital Converter (ADC) connected to ui_in to sample real analog signals (like a microphone or light sensor).
+    -   Output: An 8-bit parallel Digital-to-Analog Converter (DAC)—or a simple R-2R resistor ladder—connected to uo_out to reconstruct the filtered analog signal for an oscilloscope or speaker.
