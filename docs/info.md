@@ -61,27 +61,27 @@ To verify the DSP core in simulation or on hardware, the pipeline must first be 
 **Initialization Sequence:**  
 
   
-1. **Reset**: Pull the **rst_n** pin LOW (0) to clear all internal memory registers.
+1. **Reset**: Pull the `rst_n` pin LOW (0) to clear all internal memory registers.
 
-2. **Enable**: Pull the **rst_n** pin HIGH (1) to wake the chip.
+2. **Enable**: Pull the `rst_n` pin HIGH (1) to wake the chip.
 
-3. **Configure**: On the very first clock cycle after reset goes high, apply your chosen Configuration Byte to **ui_in**.
+3. **Configure**: On the very first clock cycle after reset goes high, apply your chosen Configuration Byte to `ui_in`.
 
-4. **Stream**: From the second clock cycle onward, apply your continuous streaming data to **ui_in**.
+4. **Stream**: From the second clock cycle onward, apply your continuous streaming data to `ui_in`.
 
 **Verification Test Vectors:**  
   
 The following test cases can be used to mathematically verify every feature of the core. Because the pipeline takes a few cycles to fill, allow the output to ramp up before reading the steady-state result.  
 
 
-| Feature Tested                    | Config Byte (Dec / Bin) | Streaming Input (ui_in)         | Expected Output (uo_out) |
+| Feature Tested                    | Config Byte (Dec / Bin) | Streaming Input (`ui_in`)         | Expected Output (`uo_out`) |
 | --------                          | -------- | --------     | --------                        |
-| **Mode 0**: Low-Pass FIR          | 8 (0000 1000)           | Constant **50**                 | Ramps up to **75**   |
-| **Mode 1**: FIR + IIR Feedback    | 9 (0000 1001)           | Constant **50**                 | Settles at **118**  |  
-| **Mode 2**: High-Pass FIR         | 10 (0000 1010)          | Alternating **0** and **200**   | Alternates between 0 and **100**   |  
-| **Mode 3**: Full DSP              | 11 (0000 1011)          | Constant **50**                 | Settles at **118**  |  
-| **Scale Validation** (Max Gain)   | 3 (0000 0011)           | Constant **50**                 | Instantly saturates/clamps at **255** |  
-| **Scale Validation** (Min Gain)   | 15 (0000 1111)          | Constant **50**                 | Settles at **58**  |  
+| **Mode 0**: Low-Pass FIR          | `8` (`0000 1000`)           | Constant `50`                 | Ramps up to `75`   |
+| **Mode 1**: FIR + IIR Feedback    | `9` (`0000 1001`)           | Constant `50`                 | Settles at `118`  |  
+| **Mode 2**: High-Pass FIR         | `10` (`0000 1010`)          | Alternating `0` and `200`   | Alternates between `0` and `100`   |  
+| **Mode 3**: Full DSP              | `11` (`0000 1011`)          | Constant `50`                 | Settles at `118`  |  
+| **Scale Validation** (Max Gain)   | `3` (`0000 0011`)           | Constant `50`                 | Instantly saturates/clamps at `255` |  
+| **Scale Validation** (Min Gain)   | `15` (`0000 1111`)          | Constant `50`                 | Settles at `58`  |  
 
 **Note on High-Pass Testing (Mode 2)**: To test the edge-detection nature of **Mode 2**, a constant input will result in **0**. By providing an alternating input (e.g., a square wave of 0 and 200), the differencing logic will actively output the 100 amplitude.
 
