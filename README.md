@@ -101,12 +101,11 @@ For the complete mathematical breakdown, Z-transform equations, configuration de
 
 ## 🧪 Local Verification & Simulation
 
-This repository includes the standard Verilog testbench wrapper (`test/tb.v`) configured for the Tiny Tapeout Gate-Level simulation flow. It is ready to be hooked up to a Cocotb Python environment.
+This project is compatible with the Tiny Tapeout test framework, which automatically verifies functionality during submission.
 
-To simulate the core locally with your own test vectors:
-1. Clone the repository.
-2. Navigate to the `test` directory.
-3. Define your custom stimulus (such as specific configuration bytes and streaming inputs) in `test.py`.
-4. Run the simulation:
-   ```bash
-   make
+Custom simulation testbenches are not included in this repository, as the design is verified through the Tiny Tapeout framework.  
+However, the design can be tested using standard Verilog simulators by applying:
+
+- Configuration byte after reset  
+- Streaming input patterns (constant, step, ramp, alternating)  
+- Observing output behavior and saturation  
