@@ -9,79 +9,72 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal on ui_in, processes it through a configurable mathematical pipeline, and outputs the filtered 8-bit result on uo_out.
+This DSP Core is a continuous streaming filter. It takes an 8-bit digital signal on **ui_in**, processes it through a configurable mathematical pipeline, and outputs the filtered 8-bit result on **uo_out**.
 
-1. The Configuration Cycle
-The module must be configured immediately after powering on or resetting. The very first byte sent to ui_in after the reset pin (rst_n) goes high is captured as the "Configuration Byte".
+**The Configuration Cycle**  
 
-Bits [1:0] set the Operating Mode.
+  
+The module must be configured immediately after powering on or resetting. The very first byte sent to **ui_in** after the reset pin (**rst_n**) goes high is captured as the "Configuration Byte".
 
-Bits [3:2] set the Scale (a right-shift divisor to prevent the FIR sum from exceeding 8-bit limits).
+| Bits     | Parameter | Description |
+| -------- | --------  | --------    |
+| [7:4]    |  Reserved   | Ignored by the core. |
+| [3:2]    |  Scale   | Right-shift divisor (0 to 3) to prevent the FIR sum from exceeding 8-bit limits. |
+| [1:0]	   |  Mode  | Sets the operating topology (see below). |
 
-Bits [7:4] are ignored.
+**Operating Modes**    
 
-2. Operating Modes
 Once configured, the core enters data-streaming mode. It supports four distinct DSP topologies:
 
-Mode 0 (Low-Pass FIR): Applies a smoothing filter using the coefficients [1, 2, 2, 1].
+**Mode 0 (Low-Pass FIR):** Applies a smoothing filter using the coefficients **[1, 2, 2, 1]**.
 
-Mode 1 (FIR + IIR): Applies the Low-Pass FIR and adds recursive feedback from previous outputs (y[n-1]/4 + y[n-2]/8).
+**Mode 1 (FIR + IIR):** Applies the Low-Pass FIR and adds recursive feedback from previous outputs **(y[n-1]/4 + y[n-2]/8)**.
 
-Mode 2 (High-Pass FIR): Applies an edge-detecting filter using alternating coefficients [1, -1, 1, -1].
+**Mode 2 (High-Pass FIR):** Applies an edge-detecting filter using alternating coefficients **[1, -1, 1, -1]**.
 
-Mode 3 (Full DSP): Combines the Low-Pass FIR, High-Pass FIR, and IIR feedback into a single output.
+**Mode 3 (Full DSP):** Combines the Low-Pass FIR, High-Pass FIR, and IIR feedback into a single output.
 
-3. Saturation Protection
-To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching uo_out, the final sum is checked. If it exceeds 255, it clamps to 255. If it drops below 0, it clamps to 0. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world signals.
+**Saturation Protection**    
+
+To ensure hardware stability, all internal math is computed using 12-bit signed arithmetic. Before reaching uo_out, the final sum is checked. If it exceeds 255, it clamps to 255. If it drops below 0, it clamps to 0. This prevents catastrophic integer wrap-around (e.g., a value of 256 turning into 0) when processing real-world audio or sensor signals.
 
 
 ## How to test
 
-To verify the DSP core on silicon or in simulation, follow this exact sequence:
+To verify the DSP core on silicon or in simulation, the pipeline must be initialized and configured before streaming data.
 
-🔹 Step 1: Load configuration
+**Initialization Sequence:**  
 
-Apply reset and send one configuration word:
+  
+1. **Reset**: Pull the **rst_n** pin LOW (0) to clear all internal memory registers.
 
-din = {4'b0000, scale, mode}
+2. **Enable**: Pull the **rst_n** pin HIGH (1) to wake the chip.
 
-Example:
+3. **Configure**: On the very first clock cycle after reset goes high, apply your chosen Configuration Byte to **ui_in**.
 
-mode = 2'b00 → FIR only
-scale = 2'b10 → divide by 4
-🔹 Step 2: Apply input signals
+4. **Stream**: From the second clock cycle onward, apply your continuous streaming data to **ui_in**.
 
-Test the DSP behavior using different input types:
+**Verification Test Vectors:**  
+  
+The following test cases can be used to mathematically verify every feature of the core. Because the pipeline takes a few cycles to fill, allow the output to ramp up before reading the steady-state result.  
 
-**Constant input**
-Apply a fixed value (e.g., 50)
-Observe smoothing and steady-state response
-Step input
-Transition from 0 → 100
-Observe rise time and settling behavior
-Ramp input
-Gradually increase input
-Observe tracking and saturation
-Alternating input
-Toggle between values (e.g., 0 ↔ 200)
-Useful for testing high-pass response (Mode 2)
-🔹 Expected behavior
-Mode 0 → smooth output
-Mode 1 → smoother with decay
-Mode 2 → reacts to changes
-Mode 3 → combined response with saturation
 
+| Feature Tested                    | Config Byte (Dec / Bin) | Streaming Input (ui_in) | Expected Output (uo_out) |
+| --------                          | -------- | --------     | --------                |
+| **Mode 0**: Low-Pass FIR          | 8 (0000 1000)           | Constant 50             | Ramps up to 75   |
+| **Mode 1**: FIR + IIR Feedback    | 9 (0000 1001)           | Constant 50             | Settles at 118  |  
+| **Mode 2**: High-Pass FIR         | 10 (0000 1010)          | Alternating 0 and 200   | Alternates between 0 and 100   |  
+| **Mode 3**: Full DSP              | 11 (0000 1011)          | Constant 50             | Settles at 118  |  
+| **Scale Validatio**n (Max Gain)   | 3 (0000 0011)           | Constant 50             | Instantly saturates/clamps at 255 |  
+| **Scale Validation** (Min Gain)   | 15 (0000 1111)          | Constant 50             | Settles at 58  |
 
 
 ## External hardware
 
-No external hardware is required.
+To fully utilize this DSP core in a physical environment, the following external hardware is recommended:
 
-The design operates entirely on digital inputs:
-- `clk`: Clock input
-- `rst`: Reset input
-- `din[7:0]`: 8-bit input data stream
+Basic Verification: A microcontroller (e.g., Arduino Uno, Raspberry Pi Pico RP2040, or ESP32) with 8 GPIO pins connected to ui_in to generate digital test patterns, and 8 GPIO pins connected to uo_out to read the filtered results.
 
-The output `dout[7:0]` provides the filtered result.
+Real-World Audio/Sensor Processing: * Input: An 8-bit parallel Analog-to-Digital Converter (ADC) connected to ui_in to sample real analog signals (like a microphone or light sensor).
 
-For demonstration purposes, the input can be driven by switches or a microcontroller, and the output can be observed using LEDs or a logic analyzer.
+Output: An 8-bit parallel Digital-to-Analog Converter (DAC)—or a simple R-2R resistor ladder—connected to uo_out to reconstruct the filtered analog signal for an oscilloscope or speaker.
