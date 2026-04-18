@@ -1,5 +1,4 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
-
+![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 # 🎛️ Logic Loopers: Configurable 8-bit Streaming DSP Core
 
 **Team:** Logic Loopers (Rohan Jose, Neelaja Joshi, Megha Murphy Raghunath)
