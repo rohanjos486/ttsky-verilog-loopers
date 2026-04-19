@@ -1,9 +1,5 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
-# 🎛️ Logic Loopers: Configurable 8-bit Streaming DSP Core
-
-**Team:** Logic Loopers (Rohan Jose, Neelaja Joshi, Megha Murphy Raghunath)
-
----
+# 🎛️ Configurable 8-bit Streaming DSP Core
 
 ## 📌 Project Overview
 This DSP Core is a fully verified, tapeout-ready digital signal processing block designed for the **Skywater 130nm ASIC node** via the Tiny Tapeout platform. 
@@ -130,4 +126,13 @@ However, the design can be tested using standard Verilog simulators by applying:
 
 - Configuration byte after reset  
 - Streaming input patterns (constant, step, ramp, alternating)  
-- Observing output behavior and saturation  
+- Observing output behavior and saturation
+
+---
+
+## 👥 Team
+
+Logic Loopers  
+- Rohan Jose  
+- Neelaja Joshi  
+- Megha Murphy Raghunath
