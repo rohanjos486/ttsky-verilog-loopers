@@ -39,6 +39,17 @@ All blocks are pipelined for continuous streaming operation.
 
 ---  
 
+## 🌍 Real-World Use Cases
+
+This DSP core can be used in a variety of real-time embedded signal processing applications:
+
+- **ASIC/FPGA DSP Blocks**: Can serve as a reusable DSP unit inside larger digital systems
+- **Audio Processing**: Noise smoothing (low-pass FIR) and transient detection (high-pass FIR) for microphones or sound sensors  
+- **Sensor Data Filtering**: Removing noise from temperature, light, or motion sensors in embedded systems  
+- **Edge Detection in Signals**: High-pass FIR mode can highlight sudden changes in input signals  
+- **Streaming Data Processing**: Suitable for real-time pipelines where one sample is processed per clock cycle  
+
+---
 ## 🧱 Block Diagram
 
 ```
