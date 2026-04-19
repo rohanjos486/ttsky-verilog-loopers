@@ -18,7 +18,7 @@ module tt_um_dsp_top (
 
   // All output pins must be assigned. If not used, assign to 0.
  // Example: ou_out is the sum of ui_in and uio_in
-    wire [7:0] x1, x2,x3;
+    wire [7:0] x1, x2, x3;
   assign uio_out = 0;
   assign uio_oe  = 0;
     // Delay line
